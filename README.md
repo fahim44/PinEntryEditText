@@ -8,7 +8,7 @@ This is a simple Varification pin entry editText library for Android. This libra
 
 ## SetUp
 
-PinEntryEditText required **minSdkVersion 21**
+PinEntryEditText required **minSdkVersion 21** and **androidx**
 
 
 Add it in your project level build.gradle at the end of repositories:
