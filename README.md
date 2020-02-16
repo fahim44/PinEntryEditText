@@ -24,7 +24,7 @@ allprojects {
 Add the dependency in your app.gradle file:
 ```
 dependencies {
-  implementation 'com.github.fahim44:PinEntryEditText:1.0.0'
+  implementation 'com.github.fahim44:PinEntryEditText:1.0.1'
 }
 ```
 
@@ -87,10 +87,21 @@ public class MainActivity extends AppCompatActivity {
 PinEntryEditText support all normal editText attributes, It also supports following additional attributes:
 
 ```
+<!-- selected field Border color, activated when focused, default value is equal to focusedStateLineColor -->
 <attr name="selectedStateLineColor" format="color" />
+
+<!-- unSelected field Border color, activated when focused, default value is equal to unFocusedStateLineColor -->
 <attr name="focusedStateLineColor" format="color" />
+
+<!-- field Border color when not focused, default value is GREY -->
 <attr name="unFocusedStateLineColor" format="color" />
+
+<!-- inner box color -->
 <attr name="innerColor" format="color" />
+
+<!-- box border corner radius -->
 <attr name="lineCornerRadius" format="dimension" />
+
+<!-- box border width -->
 <attr name="lineWidth" format="dimension" />
  ```
