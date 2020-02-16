@@ -49,8 +49,6 @@ public class PinEntryEditText extends AppCompatEditText {
     ColorStateList mColorStates = new ColorStateList(mStates, mColors);
 
 
-
-
     public PinEntryEditText(Context context) {
         super(context);
     }
@@ -92,6 +90,7 @@ public class PinEntryEditText extends AppCompatEditText {
             fArray[0] = new InputFilter.LengthFilter(4);
             setFilters(fArray);
         } else {
+            boolean valueSet = false;
             for (InputFilter filter : getFilters()) {
                 if (filter instanceof InputFilter.LengthFilter) {
                     mNumChars = ((InputFilter.LengthFilter) filter).getMax();
@@ -101,8 +100,18 @@ public class PinEntryEditText extends AppCompatEditText {
                         fArray[0] = new InputFilter.LengthFilter(4);
                         setFilters(fArray);
                     }
+                    valueSet = true;
                     break;
                 }
+            }
+            if (!valueSet) {
+                InputFilter[] fArray = new InputFilter[getFilters().length + 1];
+                mNumChars = 4;
+                fArray[0] = new InputFilter.LengthFilter(4);
+                for (int i = 0; i < getFilters().length; i++) {
+                    fArray[i + 1] = getFilters()[i];
+                }
+                setFilters(fArray);
             }
         }
 
@@ -224,7 +233,6 @@ public class PinEntryEditText extends AppCompatEditText {
     public void setPinEntryListener(PinEntryListener l) {
         mPinEntryListener = l;
     }
-
 
 
     private int getColorForState(int... states) {
