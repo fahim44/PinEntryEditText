@@ -1,6 +1,7 @@
 package com.lamonjush.pinentryedittext;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -33,6 +34,23 @@ public class PinEntryEditText extends AppCompatEditText {
 
     private PinEntryListener mPinEntryListener;
 
+    int[][] mStates = new int[][]{
+            new int[]{android.R.attr.state_selected}, // selected
+            new int[]{android.R.attr.state_focused}, // focused
+            new int[]{-android.R.attr.state_focused}, // unfocused
+    };
+
+    int[] mColors = new int[]{
+            Color.GREEN,
+            Color.BLACK,
+            Color.GRAY
+    };
+
+    ColorStateList mColorStates = new ColorStateList(mStates, mColors);
+
+
+
+
     public PinEntryEditText(Context context) {
         super(context);
     }
@@ -56,7 +74,10 @@ public class PinEntryEditText extends AppCompatEditText {
 
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.PinEntryEditText, 0, 0);
         try {
-            mOuterBoxPaint.setColor(a.getColor(R.styleable.PinEntryEditText_lineColor, Color.RED));
+            mColors[2] = a.getColor(R.styleable.PinEntryEditText_unFocusedStateLineColor, Color.GRAY);
+            mColors[1] = a.getColor(R.styleable.PinEntryEditText_focusedStateLineColor, mColors[2]);
+            mColors[0] = a.getColor(R.styleable.PinEntryEditText_selectedStateLineColor, mColors[1]);
+
             mInnerBoxPaint.setColor(a.getColor(R.styleable.PinEntryEditText_innerColor, Color.WHITE));
             mBoxCornerRadius = a.getDimension(R.styleable.PinEntryEditText_lineCornerRadius, 8);
             mBoxWidth = a.getDimension(R.styleable.PinEntryEditText_lineWidth, 10);
@@ -166,6 +187,9 @@ public class PinEntryEditText extends AppCompatEditText {
         getPaint().getTextWidths(getText(), 0, textLength, textWidths);
 
         for (int i = 0; i < mNumChars; i++) {
+
+            updateColorForLines(i == textLength);
+
             canvas.drawRoundRect(startX, top, startX + mCharSize, bottom, mBoxCornerRadius, mBoxCornerRadius, mOuterBoxPaint);
             canvas.drawRoundRect(startX + mBoxWidth, top + mBoxWidth, startX + mCharSize - mBoxWidth, bottom - mBoxWidth, mBoxCornerRadius, mBoxCornerRadius, mInnerBoxPaint);
 
@@ -199,6 +223,27 @@ public class PinEntryEditText extends AppCompatEditText {
 
     public void setPinEntryListener(PinEntryListener l) {
         mPinEntryListener = l;
+    }
+
+
+
+    private int getColorForState(int... states) {
+        return mColorStates.getColorForState(states, Color.GRAY);
+    }
+
+    /* next = is the current char the next character to be input? */
+    private void updateColorForLines(boolean next) {
+        if (isFocused()) {
+            mOuterBoxPaint.setColor(
+                    getColorForState(android.R.attr.state_focused));
+            if (next) {
+                mOuterBoxPaint.setColor(
+                        getColorForState(android.R.attr.state_selected));
+            }
+        } else {
+            mOuterBoxPaint.setColor(
+                    getColorForState(-android.R.attr.state_focused));
+        }
     }
 
 }

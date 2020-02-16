@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="PinEntryEditText">
-        <attr name="lineColor" format="color" />
+        <attr name="selectedStateLineColor" format="color" />
+        <attr name="focusedStateLineColor" format="color" />
+        <attr name="unFocusedStateLineColor" format="color" />
         <attr name="innerColor" format="color" />
         <attr name="lineCornerRadius" format="dimension" />
         <attr name="lineWidth" format="dimension" />
