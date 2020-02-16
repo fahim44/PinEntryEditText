@@ -7,17 +7,14 @@
     tools:context=".MainActivity">
 
     <com.lamonjush.pinentryedittext.PinEntryEditText
+        android:id="@+id/pinEntryEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:backgroundTint="@android:color/transparent"
-        android:cursorVisible="false"
         android:digits="1234567890"
-        android:gravity="center"
         android:inputType="number"
-        android:maxLength="4"
         android:textColor="@android:color/black"
-        android:textIsSelectable="false"
         android:textSize="34sp"
         app:innerColor="@android:color/white"
         app:layout_constraintLeft_toLeftOf="parent"

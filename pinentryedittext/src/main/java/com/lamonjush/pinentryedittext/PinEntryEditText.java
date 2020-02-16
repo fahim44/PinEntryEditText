@@ -7,8 +7,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.ActionMode;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -28,6 +30,8 @@ public class PinEntryEditText extends AppCompatEditText {
     Paint mInnerBoxPaint = new Paint();
 
     private OnClickListener mClickListener;
+
+    private PinEntryListener mPinEntryListener;
 
     public PinEntryEditText(Context context) {
         super(context);
@@ -60,14 +64,31 @@ public class PinEntryEditText extends AppCompatEditText {
         } finally {
             a.recycle();
         }
-        for (InputFilter filter : getFilters()) {
-            if (filter instanceof InputFilter.LengthFilter) {
-                mNumChars = ((InputFilter.LengthFilter) filter).getMax();
-                if (mNumChars <= 0)
-                    mNumChars = 4;
-                break;
+
+        if (getFilters().length == 0) {
+            mNumChars = 4;
+            InputFilter[] fArray = new InputFilter[1];
+            fArray[0] = new InputFilter.LengthFilter(4);
+            setFilters(fArray);
+        } else {
+            for (InputFilter filter : getFilters()) {
+                if (filter instanceof InputFilter.LengthFilter) {
+                    mNumChars = ((InputFilter.LengthFilter) filter).getMax();
+                    if (mNumChars <= 0) {
+                        mNumChars = 4;
+                        InputFilter[] fArray = new InputFilter[1];
+                        fArray[0] = new InputFilter.LengthFilter(4);
+                        setFilters(fArray);
+                    }
+                    break;
+                }
             }
         }
+
+
+        setCursorVisible(false);
+        setTextIsSelectable(false);
+        setGravity(Gravity.CENTER);
 
         //Disable copy paste
         super.setCustomSelectionActionModeCallback(
@@ -95,6 +116,25 @@ public class PinEntryEditText extends AppCompatEditText {
             setSelection(Objects.requireNonNull(getText()).length());
             if (mClickListener != null) {
                 mClickListener.onClick(v);
+            }
+        });
+
+        addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (mPinEntryListener != null) {
+                    if (editable.toString().length() == mNumChars) {
+                        mPinEntryListener.onPinEntered(editable.toString());
+                    }
+                }
             }
         });
 
@@ -156,5 +196,10 @@ public class PinEntryEditText extends AppCompatEditText {
     public void setCustomSelectionActionModeCallback(ActionMode.Callback actionModeCallback) {
         throw new RuntimeException("setCustomSelectionActionModeCallback() not supported.");
     }
+
+    public void setPinEntryListener(PinEntryListener l) {
+        mPinEntryListener = l;
+    }
+
 }
 
