@@ -1,11 +1,12 @@
 package com.lamonjush.pinentryedittext;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -14,6 +15,7 @@ import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import androidx.appcompat.widget.AppCompatEditText;
 
@@ -25,14 +27,14 @@ public class PinEntryEditText extends AppCompatEditText {
     float mCharSize = 0;
     float mNumChars = 4;
     float mLineSpacing = 16; //8dp by default
-    float mBoxWidth = 10;
-    float mBoxCornerRadius = 8;
-    Paint mOuterBoxPaint = new Paint();
-    Paint mInnerBoxPaint = new Paint();
 
     private OnClickListener mClickListener;
 
     private PinEntryListener mPinEntryListener;
+
+    private BackgroundShape backgroundShape = new BackgroundShape();
+
+    private int strokeColor = Color.GRAY;
 
     int[][] mStates = new int[][]{
             new int[]{android.R.attr.state_selected}, // selected
@@ -76,9 +78,9 @@ public class PinEntryEditText extends AppCompatEditText {
             mColors[1] = a.getColor(R.styleable.PinEntryEditText_focusedStateLineColor, mColors[2]);
             mColors[0] = a.getColor(R.styleable.PinEntryEditText_selectedStateLineColor, mColors[1]);
 
-            mInnerBoxPaint.setColor(a.getColor(R.styleable.PinEntryEditText_innerColor, Color.WHITE));
-            mBoxCornerRadius = a.getDimension(R.styleable.PinEntryEditText_lineCornerRadius, 8);
-            mBoxWidth = a.getDimension(R.styleable.PinEntryEditText_lineWidth, 10);
+            backgroundShape.setFillColor(a.getColor(R.styleable.PinEntryEditText_innerColor, Color.TRANSPARENT));
+            backgroundShape.setCornerRadius(Utils.convertDpToPixel(a.getDimension(R.styleable.PinEntryEditText_lineCornerRadius, 4), getContext()));
+            backgroundShape.setStrokeWidth((int) Utils.convertDpToPixel(a.getDimension(R.styleable.PinEntryEditText_lineWidth, 2), getContext()));
             getPaint().setColor(getCurrentTextColor());
         } finally {
             a.recycle();
@@ -168,6 +170,12 @@ public class PinEntryEditText extends AppCompatEditText {
             }
         });
 
+        setOnFocusChangeListener((view, b) -> {
+            if (b) {
+                postDelayed(() -> ((EditText) view).setSelection(((EditText) view).getText().length()), 50);
+            }
+        });
+
     }
 
     @Override
@@ -192,15 +200,16 @@ public class PinEntryEditText extends AppCompatEditText {
         //Text Width
         Editable text = getText();
         int textLength = Objects.requireNonNull(text).length();
-        float[] textWidths = new float[textLength];
+        @SuppressLint("DrawAllocation") float[] textWidths = new float[textLength];
         getPaint().getTextWidths(getText(), 0, textLength, textWidths);
 
         for (int i = 0; i < mNumChars; i++) {
 
             updateColorForLines(i == textLength);
 
-            canvas.drawRoundRect(startX, top, startX + mCharSize, bottom, mBoxCornerRadius, mBoxCornerRadius, mOuterBoxPaint);
-            canvas.drawRoundRect(startX + mBoxWidth, top + mBoxWidth, startX + mCharSize - mBoxWidth, bottom - mBoxWidth, mBoxCornerRadius, mBoxCornerRadius, mInnerBoxPaint);
+            Drawable drawable = backgroundShape.getDrawable(strokeColor);
+            drawable.setBounds(startX, top, (int) (startX + mCharSize), bottom);
+            drawable.draw(canvas);
 
             if (getText().length() > i) {
                 float middle = startX + mCharSize / 2;
@@ -242,15 +251,12 @@ public class PinEntryEditText extends AppCompatEditText {
     /* next = is the current char the next character to be input? */
     private void updateColorForLines(boolean next) {
         if (isFocused()) {
-            mOuterBoxPaint.setColor(
-                    getColorForState(android.R.attr.state_focused));
+            strokeColor = getColorForState(android.R.attr.state_focused);
             if (next) {
-                mOuterBoxPaint.setColor(
-                        getColorForState(android.R.attr.state_selected));
+                strokeColor = getColorForState(android.R.attr.state_selected);
             }
         } else {
-            mOuterBoxPaint.setColor(
-                    getColorForState(-android.R.attr.state_focused));
+            strokeColor = getColorForState(-android.R.attr.state_focused);
         }
     }
 
