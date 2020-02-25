@@ -36,6 +36,8 @@ public class PinEntryEditText extends AppCompatEditText {
 
     private int strokeColor = Color.GRAY;
 
+    private Drawable focusedStateDrawable, unfocusedStateDrawable, selectedStateDrawable;
+
     int[][] mStates = new int[][]{
             new int[]{android.R.attr.state_selected}, // selected
             new int[]{android.R.attr.state_focused}, // focused
@@ -81,6 +83,9 @@ public class PinEntryEditText extends AppCompatEditText {
             backgroundShape.setFillColor(a.getColor(R.styleable.PinEntryEditText_innerColor, Color.TRANSPARENT));
             backgroundShape.setCornerRadius(Utils.convertDpToPixel(a.getDimension(R.styleable.PinEntryEditText_lineCornerRadius, 4), getContext()));
             backgroundShape.setStrokeWidth((int) Utils.convertDpToPixel(a.getDimension(R.styleable.PinEntryEditText_lineWidth, 2), getContext()));
+
+
+            setBackgroundDrawable(a);
             getPaint().setColor(getCurrentTextColor());
         } finally {
             a.recycle();
@@ -178,6 +183,12 @@ public class PinEntryEditText extends AppCompatEditText {
 
     }
 
+    private void setBackgroundDrawable(TypedArray a) {
+        unfocusedStateDrawable = a.getDrawable(R.styleable.PinEntryEditText_unFocusedStateBackgroundDrawable);
+        focusedStateDrawable = a.getDrawable(R.styleable.PinEntryEditText_focusedStateBackgroundDrawable);
+        selectedStateDrawable = a.getDrawable(R.styleable.PinEntryEditText_selectedStateBackgroundDrawable);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         //super.onDraw(canvas);
@@ -205,9 +216,11 @@ public class PinEntryEditText extends AppCompatEditText {
 
         for (int i = 0; i < mNumChars; i++) {
 
-            updateColorForLines(i == textLength);
-
-            Drawable drawable = backgroundShape.getDrawable(strokeColor);
+            Drawable drawable = getDrawable(i == textLength);
+            if (drawable == null) {
+                updateColorForLines(i == textLength);
+                drawable = backgroundShape.getDrawable(strokeColor);
+            }
             drawable.setBounds(startX, top, (int) (startX + mCharSize), bottom);
             drawable.draw(canvas);
 
@@ -257,6 +270,19 @@ public class PinEntryEditText extends AppCompatEditText {
             }
         } else {
             strokeColor = getColorForState(-android.R.attr.state_focused);
+        }
+    }
+
+    private Drawable getDrawable(boolean next) {
+        if (isFocused()) {
+            Drawable drawable;
+            drawable = focusedStateDrawable;
+            if (next) {
+                drawable = selectedStateDrawable;
+            }
+            return drawable;
+        } else {
+            return unfocusedStateDrawable;
         }
     }
 

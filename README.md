@@ -104,4 +104,13 @@ PinEntryEditText support all normal editText attributes, It also supports follow
 
 <!-- box border width, default value is 2dp -->
 <attr name="lineWidth" format="dimension" />
+
+<!-- unfocused state field item background, default to box -->
+<attr name="unFocusedStateBackgroundDrawable" format="reference|color" />
+
+<!-- focused state field item background, default to box -->
+<attr name="focusedStateBackgroundDrawable" format="reference|color" />
+
+<!-- selected state field item background, default to box -->
+<attr name="selectedStateBackgroundDrawable" format="reference|color" />
  ```

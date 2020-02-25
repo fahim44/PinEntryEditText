@@ -28,7 +28,10 @@
         app:lineCornerRadius="4dp"
         app:lineWidth="2dp"
         app:selectedStateLineColor="@android:color/holo_red_dark"
-        app:unFocusedStateLineColor="@android:color/darker_gray" />
+        app:unFocusedStateLineColor="@android:color/darker_gray"
+        app:unFocusedStateBackgroundDrawable="@drawable/bottom_unfocused"
+        app:focusedStateBackgroundDrawable="@drawable/bottom_focused"
+        app:selectedStateBackgroundDrawable="@drawable/bottom_selected"/>
 
     <EditText
         android:id="@+id/dummyEditText"
