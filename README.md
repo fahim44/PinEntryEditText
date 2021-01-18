@@ -12,7 +12,7 @@ PinEntryEditText required **minSdkVersion 21** and **androidx**
 
 
 Add it in your project level build.gradle at the end of repositories:
-```
+```gradle
 allprojects {
   repositories {
     ...
@@ -22,7 +22,7 @@ allprojects {
 ```
 
 Add the dependency in your app.gradle file:
-```
+```gradle
 dependencies {
   implementation 'com.github.fahim44:PinEntryEditText:{latest_version}'
 }
@@ -33,7 +33,7 @@ dependencies {
 
 In your xml, add :
 
-```
+```xml
 <!--
      * Set android:maxLength for set Total field count,Default value is 4
     -->
@@ -61,7 +61,7 @@ In your xml, add :
 
 to get pinEntryCallback, setUp callback in your View Java class:
 
-```
+```java
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
 PinEntryEditText support all normal editText attributes, It also supports following additional attributes:
 
-```
+```xml
 <!-- selected field Border color, activated when focused, default value is equal to focusedStateLineColor -->
 <attr name="selectedStateLineColor" format="color" />
 
