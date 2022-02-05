@@ -113,4 +113,7 @@ PinEntryEditText support all normal editText attributes, It also supports follow
 
 <!-- selected state field item background, default to box -->
 <attr name="selectedStateBackgroundDrawable" format="reference|color" />
+
+<!-- select input type. Exceptable input types are number, numberPassword -->
+<attr name="android:inputType" format="inputType" />
  ```
