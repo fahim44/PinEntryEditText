@@ -15,8 +15,10 @@ import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
 
 import java.util.Objects;
@@ -32,7 +34,7 @@ public class PinEntryEditText extends AppCompatEditText {
 
     private PinEntryListener mPinEntryListener;
 
-    private BackgroundShape backgroundShape = new BackgroundShape();
+    private final BackgroundShape backgroundShape = new BackgroundShape();
 
     private int strokeColor = Color.GRAY;
 
@@ -209,8 +211,11 @@ public class PinEntryEditText extends AppCompatEditText {
         int top = 0;
 
         //Text Width
-        Editable text = getText();
+        CharSequence text = getText();
         int textLength = Objects.requireNonNull(text).length();
+        if (getInputType() == (EditorInfo.TYPE_NUMBER_VARIATION_PASSWORD | EditorInfo.TYPE_CLASS_NUMBER)) {
+            text = getStarCharSequence(textLength);
+        }
         @SuppressLint("DrawAllocation") float[] textWidths = new float[textLength];
         getPaint().getTextWidths(getText(), 0, textLength, textWidths);
 
@@ -250,6 +255,26 @@ public class PinEntryEditText extends AppCompatEditText {
     @Override
     public void setCustomSelectionActionModeCallback(ActionMode.Callback actionModeCallback) {
         throw new RuntimeException("setCustomSelectionActionModeCallback() not supported.");
+    }
+
+    private CharSequence getStarCharSequence(int length) {
+        return new CharSequence() {
+            @Override
+            public int length() {
+                return length;
+            }
+
+            @Override
+            public char charAt(int index) {
+                return '*';
+            }
+
+            @NonNull
+            @Override
+            public CharSequence subSequence(int start, int end) {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
     public void setPinEntryListener(PinEntryListener l) {
