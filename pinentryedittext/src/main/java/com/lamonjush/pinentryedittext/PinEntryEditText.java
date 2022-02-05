@@ -32,7 +32,7 @@ public class PinEntryEditText extends AppCompatEditText {
 
     private PinEntryListener mPinEntryListener;
 
-    private BackgroundShape backgroundShape = new BackgroundShape();
+    private final BackgroundShape backgroundShape = new BackgroundShape();
 
     private int strokeColor = Color.GRAY;
 
